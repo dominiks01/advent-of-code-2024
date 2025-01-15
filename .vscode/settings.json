@@ -1,0 +1,14 @@
+{
+    "editor.defaultFormatter": "xaver.clang-format",
+    "editor.formatOnSave": true,
+    "lldb.executable": "/usr/bin/lldb-mi",
+    "debug.defaultDebugger": "lldb",
+    "cmake.debugConfig.type": "lldb",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureSettings": {
+        "CMAKE_C_COMPILER": "/usr/bin/clang",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++",
+        "CMAKE_CXX_FLAGS": "-std=c++23",
+        "CMAKE_BUILD_TYPE": "Debug"
+    }
+}
