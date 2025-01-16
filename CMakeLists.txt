@@ -29,7 +29,7 @@ add_executable(main ${WORKING_DIR}/${MAIN_FILE} ${UTILS})
 target_include_directories(main PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 
 # Find all .txt files
-file(GLOB TXT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${WORKING_DIR}/*.txt")
+file(GLOB TXT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${WORKING_DIR}/input/*.txt")
 
 add_custom_target(copy_txt_files ALL)
 
