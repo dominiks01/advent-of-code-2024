@@ -1,0 +1,16 @@
+﻿---
+BasedOnStyle: Google
+Cpp11BracedListStyle: 'true'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'true'
+SpaceBeforeRangeBasedForLoopColon: 'false'
+SpacesBeforeTrailingComments: '0'
+SpacesInCStyleCastParentheses: 'true'
+SpacesInContainerLiterals: 'true'
+SpacesInParentheses: 'false'
+TabWidth: '4'
+AlignTrailingComments: true
+ConstructorInitializerIndentWidth: 4
+CompactNamespaces: true
+
+...

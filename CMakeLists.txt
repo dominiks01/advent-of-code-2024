@@ -20,6 +20,7 @@ set(
     utils/pair.h
     utils/graph.h
     utils/graph.c
+    utils/hash_map_status_codes.h
 )
 
 source_group("utils" FILES ${UTILS})

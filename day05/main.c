@@ -7,37 +7,12 @@
 #include "./../utils/hash_map.h"
 #include "./../utils/vector.h"
 
-int calculateValue(vector* updates, HashMap* rules) {
-    char stringA[20];
-    char stringB[20];
-
-    for (size_t i = 0; i < updates->count; i++) {
-        for (size_t j = i + 1; j < updates->count; j++) {
-
-            int vala = *( int* )get(updates, i);
-            int valb = *( int* )get(updates, j);
-
-            snprintf(stringA, sizeof(stringA), "%i", vala);
-            snprintf(stringB, sizeof(stringB), "%i", valb);
-
-            int updateRuleA = *( int* )search_map(rules, stringA);
-            int updateRuleB = *( int* )search_map(rules, stringB);
-
-            if (updateRuleA == -1 || updateRuleB == -1) continue;
-            if (updateRuleA >= updateRuleB) return 0;
-        }
-    }
-
-    printf("VAL: [%i]\n", *( int* )get(updates, updates->count / 2));
-    return *( int* )get(updates, updates->count / 2);
-};
-
 int main(int argc, char** argv) {
 
     char line[256];
     const char* filename = "input.txt";
     int first = 0, second = 0, value = 0, index = 0;
-    char str[3];
+    char str[5];
 
     int result = 0;
 
@@ -49,46 +24,50 @@ int main(int argc, char** argv) {
     }
 
     vector* v = create_vector(sizeof(vector*), 100);
+    free_vector(v);
 
-    for (int i = 0; i < 100; i++) {
-        vector* s = create_vector(sizeof(int), 10);
+    char key_str[255];
+    HashMap* map = hash_map_create(sizeof(vector));
 
-        for (int j = 0; j < 10; j++) {
-            int value = i * j + 31;
-            push_back(s, &value);
+    for (int i = 1; i < 100; i++) {
+        vector* v = create_vector(sizeof(vector), 2);
+        snprintf(key_str, 255, "key_string_%i", i);
+
+        for (int j = 0; j < i; j++) {
+            int value = ( int )(i * 10 + j);
+            push_back(v, &value);
         }
 
-        push_back(v, &s);
+        hash_map_insert(map, key_str, v,
+                        sizeof(vector) + v->capacity * v->item_size);
     }
 
-    while (fgets(line, sizeof(line), fptr)) {
-        if (sscanf(line, "%i|%i", &first, &second) != -1) {
+    for (int i = 1; i < 100; i++) {
+        snprintf(key_str, 255, "key_string_%i", i);
+        vector* act = hash_map_find(map, key_str);
 
-            vector* act = ( vector* )get(v, first);
-            push_back(act, &second);
-            emplace_vector(v, act, first);
+        printf("vector: [");
 
+        for (size_t j = 0; j < act->count - 1; j++) {
+            int* value = ( int* )get(act, j);
+
+            if (value == NULL) {
+                continue;
+            }
+
+            printf("%i,", *value);
+        }
+
+        int* value = ( int* )get(act, act->count - 1);
+
+        if (value == NULL) {
+            printf("]\n");
         } else {
-            break;
+            printf("%i]\n", *( int* )get(act, act->count - 1));
         }
-    };
-
-    for (size_t i = 0; i < 100; i++) {
-        vector* act = ( vector* )get(v, first);
-        print_vector(act);
     }
 
-    // while (fgets(line, sizeof(line), fptr)) {
-
-    //     char* strDup = strdup(line);
-    //     char* token = strtok(strDup, ",");
-
-    //     while (token != NULL) {
-    //         int value = atoi(token);
-    //         token = strtok(NULL, ",");
-    //     }
-    // };
-
+    hash_map_free(map);
     printf("Task 01: result [%i]\n", result);
 
     return 0;

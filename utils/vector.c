@@ -67,8 +67,8 @@ void print_vector(vector* v) {
 
     printf("vector: [");
 
-    for (size_t i = 0; v->capacity - 1; i++) {
-        printf("%s, ", ( char* )(get(v, v->item_size)));
+    for (size_t i = 0; i < v->item_size; i++) {
+        printf("%s, ", ( char* )(get(v, i)));
     }
 
     printf("%s]\n", ( char* )(get(v, v->count - 1)));
