@@ -21,38 +21,31 @@ typedef struct {
 } HashMap;
 
 /**
- *  @brief Calculate hash value of key using FNV hash algorithm in version 1a
- *
- *  @param key Key value
- *  @param len HashMap capacity for hash calculation
- *  @return Calculated hash value
- */
-uint32_t hash_map_hash_function(const char* key, const uint32_t len);
-
-/**
- * @brief Create HashMap given capacity and size of mapped object type.
+ * @brief Create and initialize HashMap
+ * Only one argument needed is size of stored object.
+ * Default HashMap capacity (HASH_MAP_DEFAULT_CAPACITY) is set to 10.
  *
  * @param item_size Size of object to be mapped.
- * @return Pointer to newly created HashMap or NULL if operation fails.
+ * @return HashMap* Pointer to new HashMap
  */
-HashMap* hash_map_create(size_t item_size);
+HashMap* hash_map_create();
 
 /**
  *  @brief Insert into HashMap object under given key.
  *
- *  @param map HashMap to store value under key.
- *  @param key Key used for accessing object.
- *  @param object Object to store under key.
+ *  @param map HashMap to store value.
+ *  @param key Key for accessing object.
+ *  @param object Object to insert into map under `key`.
  */
 HashMapStatusCode hash_map_insert(HashMap* map, const char* key, void* object,
                                   size_t object_size);
 
 /**
- *  @brief Search object in HashMap under given key.
+ *  @brief Search object in HashMap with given key.
  *
  *  @param map HashMap on which search operation will be performed.
  *  @param key Key of searched object
- *  @return Pointer to object stored in HashMap or NULL
+ *  @return void* Pointer to object stored in HashMap or NULL
  */
 void* hash_map_find(HashMap*, const char*);
 

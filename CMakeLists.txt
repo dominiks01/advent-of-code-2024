@@ -11,6 +11,15 @@ project(
     LANGUAGES CXX C
 )
 
+if(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(SANITIZER_FLAGS " -Wall -Wextra -Werror -fsanitize=undefined,address -fsanitize=address -g ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+else()
+    message(WARNING "AddressSanitizer is only supported with Clang in this setup.")
+endif()
+
+
 set(
     UTILS
     utils/hash_map.h
@@ -21,6 +30,8 @@ set(
     utils/graph.h
     utils/graph.c
     utils/hash_map_status_codes.h
+    utils/graph_matrix_representation.h
+    utils/graph_matrix_representation.c
 )
 
 source_group("utils" FILES ${UTILS})
@@ -28,7 +39,6 @@ include_directories(./utils)
 add_executable(main ${WORKING_DIR}/${MAIN_FILE} ${UTILS})
 target_include_directories(main PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/utils")
 
-# Find all .txt files
 file(GLOB TXT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${WORKING_DIR}/input/*.txt")
 
 add_custom_target(copy_txt_files ALL)

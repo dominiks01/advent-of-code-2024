@@ -11,17 +11,16 @@
 #define FNV_PRIME 0x01000193
 #define HASH_MAP_DEFAULT_CAPACITY 10
 #define HASH_MAP_MEMORY_RESIZE_SCALAR 2
+#define MAX_ALLOWED_SIZE 65536
 
 /**
- * @brief Calculate hash value of key using FNV hash algorithm in version 1a
- * Fowler–Noll–Vo 1a hash fucntion.
- * https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function
+ *  @brief Calculate hash value of key using FNV-1a algorithm
  *
- * @param key Key value
- * @param len HashMap size
- * @return Calculated hash value
+ *  @param key HashMap key
+ *  @param len HashMap capacity for hash calculation
+ *  @return uint32_t Calculated hash value
  */
-uint32_t hash_map_hash_function(const char *key, const uint32_t len) {
+static uint32_t hash_map_hash_function(const char *key, const uint32_t len) {
 
     if (key == NULL || len <= 0) {
         return 0;// Invalid input
@@ -39,12 +38,14 @@ uint32_t hash_map_hash_function(const char *key, const uint32_t len) {
 }
 
 /**
- * @brief Create HashMap given capacity and size of mapped object type.
+ * @brief Create and initialize HashMap
+ * Only one argument needed is size of stored object.
+ * Default HashMap capacity (HASH_MAP_DEFAULT_CAPACITY) is set to 10.
  *
  * @param item_size Size of object to be mapped.
- * @return Pointer to newly created HashMap or NULL if operation fails.
+ * @return HashMap* Pointer to new HashMap
  */
-HashMap *hash_map_create(size_t item_size) {
+HashMap *hash_map_create() {
 
     HashMap *hash_map = ( HashMap * )malloc(sizeof(HashMap));
     if (!hash_map) {
@@ -124,10 +125,9 @@ static HashMapStatusCode resize_map(HashMap *map) {
 /**
  *  @brief Insert into HashMap object under given key.
  *
- *  @param map HashMap to store value under key.
- *  @param key Key used for accessing object.
- *  @param object ptr to object to be stored under key.
- *  @param object_size Size of object for managing memory
+ *  @param map HashMap to store value.
+ *  @param key Key for accessing object.
+ *  @param object Object to insert into map under `key`.
  */
 HashMapStatusCode hash_map_insert(HashMap *map, const char *key, void *object,
                                   size_t object_size) {
@@ -148,12 +148,18 @@ HashMapStatusCode hash_map_insert(HashMap *map, const char *key, void *object,
     while (curr) {
         if (strcmp(curr->key, key) == 0) {
 
+            if (object_size >= MAX_ALLOWED_SIZE) {
+                fprintf(stderr, "Requested size exceeds limit!\n");
+                return HASH_MAP_ERROR_OUT_OF_MEMORY;
+            }
+
             void *new_item = malloc(object_size);
             if (!new_item) {
                 return HASH_MAP_ERROR_OUT_OF_MEMORY;
             }
             memcpy(new_item, object, object_size);
-            free(curr->item);
+            free(object);
+            // free(curr->item);
             curr->item = new_item;
 
             return HASH_MAP_SUCCESS;
@@ -171,7 +177,8 @@ HashMapStatusCode hash_map_insert(HashMap *map, const char *key, void *object,
     new_node->key = strdup(key);
     new_node->node_size = object_size;
 
-    memcpy(new_node->item, object, new_node->node_size);
+    memcpy(new_node->item, object, new_node->node_size - sizeof(Node));
+    free(object);
 
     // Add newly created node to HashMap
     new_node->next = map->table[key_hash_value];
@@ -186,7 +193,7 @@ HashMapStatusCode hash_map_insert(HashMap *map, const char *key, void *object,
  *
  *  @param map HashMap on which search operation will be performed.
  *  @param key Key of searched object
- *  @return Pointer to object stored in HashMap or NULL
+ *  @return void* Pointer to object stored in HashMap or NULL
  */
 void *hash_map_find(HashMap *map, const char *key) {
     uint32_t index =
@@ -257,13 +264,25 @@ HashMapStatusCode hash_map_free(HashMap *map) {
             Node *temp = current;
             current = current->next;
 
-            free(temp->key);
-            free(temp->item);
-            free(temp);
+            if (temp->key != NULL) {
+                free(temp->key);
+                temp->key = NULL;
+            }
+
+            if (temp->item != NULL) {
+                free(temp->item);
+                temp->item = NULL;
+            }
+
+            if (temp != NULL) {
+                free(temp);
+                temp = NULL;
+            }
         }
     }
     free(map->table);
-    free(map);
+    map->table = NULL;
+    map = NULL;
 
     return HASH_MAP_SUCCESS;
 }

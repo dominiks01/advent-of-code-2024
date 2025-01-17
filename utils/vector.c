@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * @brief Create a vector object
+ *
+ * @param item_size
+ * @param initial_capacity
+ * @return vector*
+ */
 vector* create_vector(size_t item_size, size_t initial_capacity) {
     vector* v = malloc(sizeof(vector));
 
@@ -12,13 +19,39 @@ vector* create_vector(size_t item_size, size_t initial_capacity) {
     v->count = 0;
     v->items = malloc(item_size * initial_capacity);
 
+    if (!v->items) {
+        free(v);
+        v = NULL;
+        return NULL;
+    }
+
     return v;
 }
 
-void push_back(vector* v, void* value) {
+/**
+ * @brief
+ *
+ * @param v
+ * @param value
+ */
+void vector_push_back(vector* v, void* value) {
+
+    if (v->capacity * 2 > MAX_ALLOWED_SIZE) {
+        fprintf(stderr, "Requested size exceeds limit!\n");
+        return;
+    }
+
     if (v->count >= v->capacity) {
-        v->capacity *= 2;
-        v->items = realloc(v->items, v->item_size * v->capacity);
+        size_t new_capacity = v->capacity * 2;
+        void* new_items = realloc(v->items, v->item_size * new_capacity);
+
+        if (new_items == NULL) {
+            fprintf(stderr, "Memory allocation failed!\n");
+            return;
+        }
+
+        v->items = new_items;
+        v->capacity = new_capacity;
     }
 
     void* target = ( char* )v->items + (v->count * v->item_size);
@@ -26,25 +59,75 @@ void push_back(vector* v, void* value) {
     v->count++;
 }
 
-void* get(vector* v, size_t index) {
+/**
+ * @brief
+ *
+ * @param v
+ * @param index
+ * @return void*
+ */
+void* vector_get(vector* v, size_t index) {
     if (v->count <= index || index < 0) {
-        printf("index out-of-range!\n");
         return NULL;
     }
 
     return ( char* )v->items + v->item_size * index;
 }
 
-void free_vector(vector* v) {
-    free(v->items);
-    v->items = NULL;
+/**
+ * @brief
+ *
+ * @param v
+ */
+void vector_free(vector* v) {
+    if (!v) {
+        return;
+    }
+
+    if (v->items != NULL) {
+        free(v->items);
+        v->items = NULL;
+    }
+
     v->count = 0;
     v->capacity = 0;
+    v = NULL;
 }
 
-void emplace_vector(vector* v, void* item, size_t index) {
+/**
+ * @brief
+ *
+ * @param v
+ * @param index
+ */
+void vector_delete(vector* v, size_t index) {
     if (!v) {
-        return;// NULL ptr dereference
+        return;
+    }
+
+    void* target = ( void* )(v->items + index * v->item_size);
+    if (target == NULL) {
+        return;
+    }
+
+    size_t move_mem = (v->count - index - 1) * v->item_size;
+    if (move_mem > 0) {
+        memmove(target, ( char* )target + v->item_size, move_mem);
+    }
+
+    v->capacity--;
+}
+
+/**
+ * @brief
+ *
+ * @param v
+ * @param item
+ * @param index
+ */
+void vector_insert(vector* v, void* item, size_t index) {
+    if (!v) {
+        return;
     }
 
     if (!item) {
@@ -55,21 +138,6 @@ void emplace_vector(vector* v, void* item, size_t index) {
         return;
     }
 
-    void** target = ( void** )(v->items + index * v->item_size);
-    *target = item;
-}
-
-void print_vector(vector* v) {
-
-    if (!v) {
-        return;// NULL ptr dereference
-    }
-
-    printf("vector: [");
-
-    for (size_t i = 0; i < v->item_size; i++) {
-        printf("%s, ", ( char* )(get(v, i)));
-    }
-
-    printf("%s]\n", ( char* )(get(v, v->count - 1)));
+    void* target = ( void* )(v->items + index * v->item_size);
+    memcpy(target, item, v->item_size);
 }

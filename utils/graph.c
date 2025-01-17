@@ -19,7 +19,7 @@ Graph* create_graph(int V) {
     new_graph->V = V;
     new_graph->array = ( AdjList* )malloc(sizeof(AdjList) * V);
 
-    for (size_t i = 0; i < new_graph->V; i++) new_graph->array[i].head = NULL;
+    for (int i = 0; i < new_graph->V; i++) new_graph->array[i].head = NULL;
 
     return new_graph;
 }
@@ -101,8 +101,8 @@ AdjListNode* topological_sort(Graph* g) {
     AdjListNode* result = NULL;
     bool* visited = ( bool* )malloc(g->V * sizeof(bool));
 
-    for (size_t i = 0; i < g->V; ++i) visited[i] = false;
-    for (size_t i = 0; i < g->V; ++i)
+    for (int i = 0; i < g->V; ++i) visited[i] = false;
+    for (int i = 0; i < g->V; ++i)
         if (!visited[i]) topological_sort_helper(g, i, visited, &result);
 
     free(visited);
