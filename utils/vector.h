@@ -60,4 +60,6 @@ void vector_insert(vector*, void*, size_t);
  */
 void vector_delete(vector*, size_t);
 
+void vector_shallow_copy(vector* dest, vector* src);
+
 #endif

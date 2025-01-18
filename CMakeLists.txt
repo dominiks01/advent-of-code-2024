@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15...3.31)
 set(CMAKE_C_COMPILER "/usr/bin/clang")
 set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-set(WORKING_DIR "day05")
-set(MAIN_FILE "main.c")
+set(WORKING_DIR "day06")
+set(MAIN_FILE "main_part2.c")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 project(

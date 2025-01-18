@@ -67,7 +67,6 @@ int main() {
 
     if (fptr == NULL) {
         printf("fopen() failed with file %s\n", filename);
-
         vector_free(rules);
         hash_map_free(rules_ordering);
 
@@ -132,11 +131,8 @@ int main() {
         }
 
         free(strDup);
-        strDup = NULL;
-
         vector_free(v);
         free(v);
-        v = NULL;
     };
 
     for (size_t i = 0; i < rules_ordering->count; i++) {
@@ -146,17 +142,14 @@ int main() {
 
         if (p_first_map != NULL) {
             vector_free(p_first_map);
-            p_first_map = NULL;
         }
     }
 
     vector_free(rules);
     free(rules);
-    rules = NULL;
 
     hash_map_free(rules_ordering);
     free(rules_ordering);
-    rules_ordering = NULL;
 
     printf("Task 01: result [%i]\n", result_1);
     printf("Task 02: result [%i]\n", result_2);

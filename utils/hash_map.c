@@ -266,22 +266,18 @@ HashMapStatusCode hash_map_free(HashMap *map) {
 
             if (temp->key != NULL) {
                 free(temp->key);
-                temp->key = NULL;
             }
 
             if (temp->item != NULL) {
                 free(temp->item);
-                temp->item = NULL;
             }
 
             if (temp != NULL) {
                 free(temp);
-                temp = NULL;
             }
         }
     }
     free(map->table);
-    map->table = NULL;
 
     return HASH_MAP_SUCCESS;
 }

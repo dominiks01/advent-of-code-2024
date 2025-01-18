@@ -13,15 +13,13 @@
  */
 vector* create_vector(size_t item_size, size_t initial_capacity) {
     vector* v = malloc(sizeof(vector));
-
     v->item_size = item_size;
     v->capacity = initial_capacity;
     v->count = 0;
     v->items = malloc(item_size * initial_capacity);
 
-    if (!v->items) {
+    if (v->items == NULL) {
         free(v);
-        v = NULL;
         return NULL;
     }
 
@@ -81,8 +79,12 @@ void* vector_get(vector* v, size_t index) {
  */
 void vector_free(vector* v) {
     if (v != NULL) {
-        free(v->items);
-        v->items = NULL;
+
+        if (v->items != NULL) {
+            free(v->items);
+            v->items = NULL;
+        }
+
         v->count = 0;
         v->capacity = 0;
     }
@@ -106,7 +108,7 @@ void vector_delete(vector* v, size_t index) {
 
     size_t move_mem = (v->count - index - 1) * v->item_size;
     if (move_mem > 0) {
-        memmove(target, ( char* )target + v->item_size, move_mem);
+        memcpy(target, ( char* )target + v->item_size, move_mem);
     }
 
     v->capacity--;
@@ -134,4 +136,15 @@ void vector_insert(vector* v, void* item, size_t index) {
 
     void* target = ( void* )(v->items + index * v->item_size);
     memcpy(target, item, v->item_size);
+}
+
+void vector_shallow_copy(vector* dest, vector* src) {
+    *dest = *src;
+    dest->items = malloc(src->capacity * sizeof(*src->items));
+
+    if (dest->items == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(dest->items, src->items, src->capacity * sizeof(*src->items));
 }
