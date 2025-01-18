@@ -177,7 +177,7 @@ HashMapStatusCode hash_map_insert(HashMap *map, const char *key, void *object,
     new_node->key = strdup(key);
     new_node->node_size = object_size;
 
-    memcpy(new_node->item, object, new_node->node_size - sizeof(Node));
+    memcpy(new_node->item, object, new_node->node_size);
     free(object);
 
     // Add newly created node to HashMap
@@ -282,7 +282,6 @@ HashMapStatusCode hash_map_free(HashMap *map) {
     }
     free(map->table);
     map->table = NULL;
-    map = NULL;
 
     return HASH_MAP_SUCCESS;
 }

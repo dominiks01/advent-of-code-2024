@@ -80,18 +80,12 @@ void* vector_get(vector* v, size_t index) {
  * @param v
  */
 void vector_free(vector* v) {
-    if (!v) {
-        return;
-    }
-
-    if (v->items != NULL) {
+    if (v != NULL) {
         free(v->items);
         v->items = NULL;
+        v->count = 0;
+        v->capacity = 0;
     }
-
-    v->count = 0;
-    v->capacity = 0;
-    v = NULL;
 }
 
 /**

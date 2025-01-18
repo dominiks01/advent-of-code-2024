@@ -67,6 +67,10 @@ int main() {
 
     if (fptr == NULL) {
         printf("fopen() failed with file %s\n", filename);
+
+        vector_free(rules);
+        hash_map_free(rules_ordering);
+
         exit(EXIT_FAILURE);
     }
 
@@ -78,13 +82,12 @@ int main() {
 
             vector* p_first_map = hash_map_find(rules_ordering, str);
 
-            if (p_first_map == NULL || p_first_map->item_size < 0 ||
-                p_first_map->item_size >= MAX_ALLOWED_SIZE ||
-                p_first_map->count > p_first_map->capacity) {
-
-                p_first_map = vector_create(sizeof(int), 10);
+            if (p_first_map != NULL) {
+                vector_free(p_first_map);
+                hash_map_delete(rules_ordering, str);
             }
 
+            p_first_map = vector_create(sizeof(int));
             vector_push_back(p_first_map, &p.second);
             hash_map_insert(rules_ordering, str, p_first_map, sizeof(vector));
         } else {
@@ -93,7 +96,7 @@ int main() {
     };
 
     while (fgets(line, sizeof(line), fptr)) {
-        vector* v = vector_create(sizeof(int));
+        vector* v = vector_create(sizeof(int), 10);
 
         char* strDup = strdup(line);
         char* token = strtok(strDup, ",");
@@ -136,7 +139,7 @@ int main() {
         v = NULL;
     };
 
-    for (size_t i = 0; i < 100; i++) {
+    for (size_t i = 0; i < rules_ordering->count; i++) {
         int value = i;
         snprintf(str, 5, "%i", value);
         vector* p_first_map = hash_map_find(rules_ordering, str);

@@ -13,9 +13,6 @@
                            vector_create_1)(__VA_ARGS__)
 #define create_vector_overload(_1, _2, NAME, ...) NAME
 
-#define COUNT_ARGS(...) COUNT_ARGS_IMPL(__VA_ARGS__, 2, 1)
-#define COUNT_ARGS_IMPL(_1, _2, N, ...) N
-
 #define vector_create_1(size) create_vector(size, VECTOR_DEFAULT_CAPACITY)
 #define vector_create_2(size, capacity) create_vector(size, capacity)
 
