@@ -16,7 +16,12 @@ vector* create_vector(size_t item_size, size_t initial_capacity) {
     v->item_size = item_size;
     v->capacity = initial_capacity;
     v->count = 0;
-    v->items = malloc(item_size * initial_capacity);
+
+    if (initial_capacity == 0) {
+        v->capacity = 1;
+    }
+
+    v->items = malloc(item_size * v->capacity);
 
     if (v->items == NULL) {
         free(v);
@@ -122,15 +127,11 @@ void vector_delete(vector* v, size_t index) {
  * @param index
  */
 void vector_insert(vector* v, void* item, size_t index) {
-    if (!v) {
+    if (!v || !v->items || !item) {
         return;
     }
 
-    if (!item) {
-        return;
-    }
-
-    if (v->items + index * v->item_size == NULL) {
+    if (index >= v->capacity) {
         return;
     }
 
