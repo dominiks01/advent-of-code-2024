@@ -190,7 +190,7 @@ int main() {
 
     pair map_dimentions = {0, 0};
     FILE* fptr = fopen(filename, "r");
-    vector* map = vector_create(sizeof(char), 0);
+    vector* map = vector_create(sizeof(char), 130 * 130);
     pair starting_location = {.first = 0, .second = 0};
 
     if (fptr == NULL) {
@@ -199,6 +199,7 @@ int main() {
     }
 
     int row_count = 0;
+    int index = 0;
 
     while (fgets(line, sizeof(line), fptr)) {
         for (int i = 0; line[i] != '\0'; i++) {
@@ -207,7 +208,8 @@ int main() {
                 continue;
             }
 
-            vector_push_back(map, &line[i]);
+            // vector_push_back(map, &line[i]);
+            vector_insert(map, &line[i], index++);
 
             if (line[i] == '<' || line[i] == '>' || line[i] == '^' ||
                 line[i] == 'v') {

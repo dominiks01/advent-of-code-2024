@@ -70,7 +70,7 @@ void vector_push_back(vector* v, void* value) {
  * @return void*
  */
 void* vector_get(vector* v, size_t index) {
-    if (v->count <= index || index < 0) {
+    if (index < 0 || index >= v->capacity) {
         return NULL;
     }
 
